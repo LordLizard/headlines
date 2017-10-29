@@ -11,6 +11,22 @@
 			<p>Ciudad: <b>{{ weather.city }}, {{ weather.country }}</b></p>
 		<p>Temperatura: {{ weather.temperature }} F</p>
 		<p>Descripci&oacute;n: {{ weather.description }}</p>
+		<h2>Cambio de Moneda</h2>
+		<form>
+			<p>Cambiar de: <select name="currency_from">
+				{% for currency in currencies %}
+				<option value="{{ currency }}" {{ 'selected="selected"' if currency_from==currency }}>{{ currency }}</option>
+				{% endfor %}
+			</select>
+				a: <select name="currency_to">
+				{% for currency in currencies %}
+				<option value="{{ currency }}" {{ 'selected="selected"' if currency_to==currency }}>{{ currency }}</option>
+				{% endfor %}
+			</select>
+			<input type="submit" value="Cambiar">
+			</p>
+		</form>
+		<p>1 {{ currency_from }} = {{ currency_to}} {{ rate }}
 		<h2>Buscar noticias</h2>
 		<form>
 			<input type="text" name="publication" placeholder="buscar noticias" />

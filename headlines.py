@@ -13,12 +13,17 @@ RSS_FEEDS = {
         'wwwhatsnew': 'https://wwwhatsnew.com/feed/',
         'granmisterio': 'https://granmisterio.org/feed/'
         }
+
 DEFAULTS = {
         'publication': 'eltiempo',
-        'city': 'Cali,CO'
+        'city': 'Cali,CO',
+        'currency_from': 'COP',
+        'currency_to': 'USD'
         }
+
 WEATHER_URL = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=imperial&lang=es&appid=d781b17b4dacdcb45df7a576e25924d1'
 
+CURRENCY_URL = 'https://openexchangerates.org/api/latest.json?app_id=e0c958dbc8bf4084bf8bf26abdc72cc1'
 
 @app.route("/")
 def home():
@@ -33,7 +38,17 @@ def home():
     if not city:
         city = DEFAULTS['city']
     weather = get_weather(city)
-    return render_template('home.html', articles=articles, weather=weather)
+
+    # get customized currency based on user input or default
+    currency_from = request.args.get('currency_from')
+    if not currency_from:
+        currency_from = DEFAULTS['currency_from']
+    currency_to = request.args.get('currency_to')
+    if not currency_to:
+        currency_to = DEFAULTS['currency_to']
+    rate, currencies = get_rate(currency_from, currency_to)
+
+    return render_template('home.html', articles=articles, weather=weather, currency_from=currency_from, currency_to=currency_to, rate=rate, currencies=sorted(currencies))
 
 
 def get_news(query):
@@ -58,6 +73,13 @@ def get_weather(query):
                 'country': parsed['sys']['country']
                 }
         return weather
+
+def get_rate(frm, to):
+    all_currency = requests.get(CURRENCY_URL)
+    parsed = json.loads(all_currency.text).get('rates')
+    frm_rate = parsed.get(frm.upper())
+    to_rate = parsed.get(to.upper())
+    return (to_rate/frm_rate, parsed.keys())
 
 
 if __name__=='__main__':
