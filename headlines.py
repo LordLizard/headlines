@@ -18,8 +18,8 @@ RSS_FEEDS = {
         }
 
 DEFAULTS = {
-        'publication': 'eltiempo',
-        'city': 'Cali,CO',
+        'publication': 'wwwhatsnew',
+        'city': 'Orlando,FL',
         'currency_from': 'COP',
         'currency_to': 'USD'
         }
@@ -97,7 +97,7 @@ def get_value_with_fallback(key):
     elif request.cookies.get(key):
         return request.cookies.get(key)
     else:
-        return DEFALTS[key]
+        return DEFAULTS[key]
 
 
 if __name__=='__main__':
